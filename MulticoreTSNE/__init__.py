@@ -4,6 +4,7 @@ import threading
 import os
 import sys
 
+from sklearn.externals import six
 from inspect import signature
 
 import numpy as np
