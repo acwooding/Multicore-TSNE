@@ -94,6 +94,12 @@ class MulticoreTSNE:
         except (IndexError, OSError):
             raise RuntimeError('Cannot find/open tsne_multicore shared library')
 
+    def __repr__(self):
+        class_name = self.__class__.__name__
+        return '%s(%s)' % (class_name, _pprint(self.get_params(deep=False),
+                                               offset=len(class_name),),)
+
+
     def fit(self, X, y=None):
         self.fit_transform(X, y)
         return self
