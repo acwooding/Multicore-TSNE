@@ -4,6 +4,8 @@ import threading
 import os
 import sys
 
+from inspect import signature
+
 import numpy as np
 import cffi
 
@@ -145,9 +147,8 @@ class MulticoreTSNE:
 
     def __repr__(self):
         class_name = self.__class__.__name__
-        return '%s(%s)' % (class_name, _pprint(self.get_params(deep=False),
+        return '%s(%s)' % (class_name, _pprint(self.get_params(),
                                                offset=len(class_name),),)
-
 
     def fit(self, X, y=None):
         self.fit_transform(X, y)
@@ -191,3 +192,44 @@ class MulticoreTSNE:
         self.n_iter_ = self.n_iter
 
         return Y
+
+    @classmethod
+    def _get_param_names(cls):
+        """Get parameter names for the estimator"""
+        # fetch the constructor or the original constructor before
+        # deprecation wrapping if any
+        init = getattr(cls.__init__, 'deprecated_original', cls.__init__)
+        if init is object.__init__:
+            # No explicit constructor to introspect
+            return []
+
+        # introspect the constructor arguments to find the model parameters
+        # to represent
+        init_signature = signature(init)
+        # Consider the constructor parameters excluding 'self'
+        parameters = [p for p in init_signature.parameters.values()
+                      if p.name != 'self' and p.kind != p.VAR_KEYWORD]
+        for p in parameters:
+            if p.kind == p.VAR_POSITIONAL:
+                raise RuntimeError("scikit-learn estimators should always "
+                                   "specify their parameters in the signature"
+                                   " of their __init__ (no varargs)."
+                                   " %s with constructor %s doesn't "
+                                   " follow this convention."
+                                   % (cls, init_signature))
+        # Extract and sort argument names excluding 'self'
+        return sorted([p.name for p in parameters])
+
+    def get_params(self):
+        """Get parameters for this object.
+
+        Returns
+        -------
+        params : mapping of string to any
+            Parameter names mapped to their values.
+        """
+        out = dict()
+        for key in self._get_param_names():
+            value = getattr(self, key, None)
+            out[key] = value
+        return out
