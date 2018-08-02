@@ -5,7 +5,7 @@ import os
 import sys
 
 from sklearn.externals import six
-from skealrn.utils.fixes import signature
+from sklearn.utils.fixes import signature
 
 import numpy as np
 import cffi
