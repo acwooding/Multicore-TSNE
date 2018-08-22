@@ -6,6 +6,7 @@ import sys
 
 import numpy as np
 import cffi
+from sklearn.base import BaseEstimator
 
 '''
     Helper class to execute TSNE in separate thread.
@@ -22,7 +23,7 @@ class FuncThread(threading.Thread):
         self._target(*self._args)
 
 
-class MulticoreTSNE:
+class MulticoreTSNE(BaseEstimator):
     """
     Compute t-SNE embedding using Barnes-Hut optimization and
     multiple cores (if avaialble).
