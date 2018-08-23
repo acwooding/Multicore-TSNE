@@ -10,7 +10,7 @@ from setuptools import setup, find_packages, Extension
 
 PACKAGE_NAME = "MulticoreTSNE"
 
-VERSION = '0.1'
+VERSION = '0.2'
 
 
 class CMakeExtension(Extension):
